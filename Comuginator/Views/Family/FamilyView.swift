@@ -241,7 +241,9 @@ struct FamilyView: View {
                 }
                 Button("Refresh") { Task { await vm.loadFamily() } }
                 Button("Send Heartbeat") { Task { await vm.sendHeartbeat() } }
-                NavigationLink(value: FamilyDestination.settings) {
+                Button {
+                    navigateTo(.settings)
+                } label: {
                     Label("Settings", systemImage: "gear")
                 }
                 Divider()

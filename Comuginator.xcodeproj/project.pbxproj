@@ -10,6 +10,7 @@
 		7F2AE17F2FDB16A1003D89D1 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2AE17E2FDB16A1003D89D1 /* WidgetKit.framework */; };
 		7F2AE1812FDB16A1003D89D1 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2AE1802FDB16A1003D89D1 /* SwiftUI.framework */; };
 		7F2AE1922FDB16A2003D89D1 /* ComuginatorWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7F2AE17C2FDB16A1003D89D1 /* ComuginatorWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AB10FB000000000000000001 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = AB10FB000000000000000002 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,10 +79,6 @@
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
-
-/* Begin PBXBuildFile section (SPM) */
-		AB10FB000000000000000001 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = AB10FB000000000000000002 /* FirebaseMessaging */; };
-/* End PBXBuildFile section (SPM) */
 
 /* Begin PBXFrameworksBuildPhase section */
 		7F2AE1792FDB16A1003D89D1 /* Frameworks */ = {
@@ -543,25 +540,6 @@
 		};
 /* End XCBuildConfiguration section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		AB10FB000000000000000002 /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseMessaging;
-		};
-/* End XCSwiftPackageProductDependency section */
-
 /* Begin XCConfigurationList section */
 		7F2AE1932FDB16A2003D89D1 /* Build configuration list for PBXNativeTarget "ComuginatorWidgetExtension" */ = {
 			isa = XCConfigurationList;
@@ -591,6 +569,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB10FB000000000000000002 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7F5C225C2FC869BC000F247D /* Project object */;
 }

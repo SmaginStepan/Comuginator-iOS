@@ -39,7 +39,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let fcmToken else { return }
-        print("[FCM] Token received")
+        print("[FCM] Token received: \(fcmToken)")
         guard SessionStore.shared.isConnected else { return }
         Task {
             _ = try? await APIClient.shared.updateFcmToken(FcmTokenRequest(fcmToken: fcmToken))
