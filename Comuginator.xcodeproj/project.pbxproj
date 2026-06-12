@@ -6,19 +6,89 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7F2AE17F2FDB16A1003D89D1 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2AE17E2FDB16A1003D89D1 /* WidgetKit.framework */; };
+		7F2AE1812FDB16A1003D89D1 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F2AE1802FDB16A1003D89D1 /* SwiftUI.framework */; };
+		7F2AE1922FDB16A2003D89D1 /* ComuginatorWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7F2AE17C2FDB16A1003D89D1 /* ComuginatorWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7F2AE1902FDB16A2003D89D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F5C225C2FC869BC000F247D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7F2AE17B2FDB16A1003D89D1;
+			remoteInfo = ComuginatorWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7F2AE1972FDB16A2003D89D1 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7F2AE1922FDB16A2003D89D1 /* ComuginatorWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		7F2AE17C2FDB16A1003D89D1 /* ComuginatorWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ComuginatorWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F2AE17E2FDB16A1003D89D1 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		7F2AE1802FDB16A1003D89D1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		7F5C22642FC869BC000F247D /* Comuginator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Comuginator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7F2AE1672FCF11A5003D89D1 /* Exceptions for "Comuginator" folder in "Comuginator" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7F5C22632FC869BC000F247D /* Comuginator */;
+		};
+		7F2AE1962FDB16A2003D89D1 /* Exceptions for "ComuginatorWidget" folder in "ComuginatorWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7F2AE17B2FDB16A1003D89D1 /* ComuginatorWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7F2AE1822FDB16A1003D89D1 /* ComuginatorWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7F2AE1962FDB16A2003D89D1 /* Exceptions for "ComuginatorWidget" folder in "ComuginatorWidgetExtension" target */,
+			);
+			path = ComuginatorWidget;
+			sourceTree = "<group>";
+		};
 		7F5C22662FC869BC000F247D /* Comuginator */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7F2AE1672FCF11A5003D89D1 /* Exceptions for "Comuginator" folder in "Comuginator" target */,
+			);
 			path = Comuginator;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7F2AE1792FDB16A1003D89D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F2AE1812FDB16A1003D89D1 /* SwiftUI.framework in Frameworks */,
+				7F2AE17F2FDB16A1003D89D1 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F5C22612FC869BC000F247D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -29,10 +99,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7F2AE17D2FDB16A1003D89D1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7F2AE17E2FDB16A1003D89D1 /* WidgetKit.framework */,
+				7F2AE1802FDB16A1003D89D1 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7F5C225B2FC869BC000F247D = {
 			isa = PBXGroup;
 			children = (
 				7F5C22662FC869BC000F247D /* Comuginator */,
+				7F2AE1822FDB16A1003D89D1 /* ComuginatorWidget */,
+				7F2AE17D2FDB16A1003D89D1 /* Frameworks */,
 				7F5C22652FC869BC000F247D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				7F5C22642FC869BC000F247D /* Comuginator.app */,
+				7F2AE17C2FDB16A1003D89D1 /* ComuginatorWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +130,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7F2AE17B2FDB16A1003D89D1 /* ComuginatorWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F2AE1932FDB16A2003D89D1 /* Build configuration list for PBXNativeTarget "ComuginatorWidgetExtension" */;
+			buildPhases = (
+				7F2AE1782FDB16A1003D89D1 /* Sources */,
+				7F2AE1792FDB16A1003D89D1 /* Frameworks */,
+				7F2AE17A2FDB16A1003D89D1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7F2AE1822FDB16A1003D89D1 /* ComuginatorWidget */,
+			);
+			name = ComuginatorWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = ComuginatorWidgetExtension;
+			productReference = 7F2AE17C2FDB16A1003D89D1 /* ComuginatorWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		7F5C22632FC869BC000F247D /* Comuginator */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7F5C226F2FC869BD000F247D /* Build configuration list for PBXNativeTarget "Comuginator" */;
@@ -55,10 +159,12 @@
 				7F5C22602FC869BC000F247D /* Sources */,
 				7F5C22612FC869BC000F247D /* Frameworks */,
 				7F5C22622FC869BC000F247D /* Resources */,
+				7F2AE1972FDB16A2003D89D1 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7F2AE1912FDB16A2003D89D1 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7F5C22662FC869BC000F247D /* Comuginator */,
@@ -80,6 +186,9 @@
 				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
+					7F2AE17B2FDB16A1003D89D1 = {
+						CreatedOnToolsVersion = 26.5;
+					};
 					7F5C22632FC869BC000F247D = {
 						CreatedOnToolsVersion = 26.5;
 					};
@@ -100,11 +209,19 @@
 			projectRoot = "";
 			targets = (
 				7F5C22632FC869BC000F247D /* Comuginator */,
+				7F2AE17B2FDB16A1003D89D1 /* ComuginatorWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7F2AE17A2FDB16A1003D89D1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F5C22622FC869BC000F247D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +232,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7F2AE1782FDB16A1003D89D1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F5C22602FC869BC000F247D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +248,82 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		7F2AE1912FDB16A2003D89D1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7F2AE17B2FDB16A1003D89D1 /* ComuginatorWidgetExtension */;
+			targetProxy = 7F2AE1902FDB16A2003D89D1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		7F2AE1942FDB16A2003D89D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ComuginatorWidget/ComuginatorWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XHBZVNJQ2J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ComuginatorWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ComuginatorWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.an0obis.Comuginator.ComuginatorWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7F2AE1952FDB16A2003D89D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ComuginatorWidget/ComuginatorWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XHBZVNJQ2J;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ComuginatorWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ComuginatorWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.an0obis.Comuginator.ComuginatorWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		7F5C226D2FC869BD000F247D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -244,12 +443,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Comuginator/Comuginator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XHBZVNJQ2J;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Comuginator/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Used to scan QR nvite codes";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -260,7 +463,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.4;
@@ -286,12 +489,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Comuginator/Comuginator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XHBZVNJQ2J;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Comuginator/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Used to scan QR nvite codes";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -302,7 +509,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.4;
@@ -326,6 +533,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7F2AE1932FDB16A2003D89D1 /* Build configuration list for PBXNativeTarget "ComuginatorWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F2AE1942FDB16A2003D89D1 /* Debug */,
+				7F2AE1952FDB16A2003D89D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7F5C225F2FC869BC000F247D /* Build configuration list for PBXProject "Comuginator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
