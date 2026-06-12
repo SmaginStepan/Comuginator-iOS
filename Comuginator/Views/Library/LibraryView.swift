@@ -96,7 +96,7 @@ private struct SetRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(set.name).font(.headline)
                 if let count = set.itemsCount {
-                    Text("\(count) item\(count == 1 ? "" : "s")")
+                    Text("\(count) items")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }

@@ -73,7 +73,7 @@ struct LibraryItemPickerView: View {
     private var mainPicker: some View {
         VStack(spacing: 0) {
             Picker("Source", selection: $tab) {
-                ForEach(Tab.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(Tab.allCases, id: \.self) { Text(LocalizedStringKey($0.rawValue)).tag($0) }
             }
             .pickerStyle(.segmented)
             .padding()
@@ -263,7 +263,7 @@ private struct FilterChip: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            Text(label)
+            Text(LocalizedStringKey(label))
                 .font(.caption)
                 .padding(.horizontal, 12).padding(.vertical, 6)
                 .background(isSelected ? Color.blue : Color.secondary.opacity(0.15),

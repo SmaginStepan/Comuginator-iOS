@@ -129,7 +129,7 @@ struct IncomingMessageView: View {
                     .font(.subheadline).foregroundStyle(.secondary)
             }
         } else {
-            Text("Select \(vm.requiredCount) reply card\(vm.requiredCount > 1 ? "s" : "")")
+            Text("Select \(vm.requiredCount) reply cards")
                 .font(.subheadline).foregroundStyle(.secondary)
         }
     }

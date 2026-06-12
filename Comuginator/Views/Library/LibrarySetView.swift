@@ -31,7 +31,7 @@ struct LibrarySetView: View {
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(vm.details?.name ?? initialName).font(.title3.bold())
-                                Text("\(vm.items.count) item\(vm.items.count == 1 ? "" : "s")")
+                                Text("\(vm.items.count) items")
                                     .font(.caption).foregroundStyle(.secondary)
                             }
 

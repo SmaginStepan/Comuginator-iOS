@@ -75,7 +75,7 @@ private struct MessageBubble: View {
                     Text("Request")
                         .font(.caption2.weight(.medium)).foregroundStyle(.orange)
                 } else {
-                    Text(msg.mode == "SEQUENCE" ? "Sequence" : "Normal")
+                    Text(LocalizedStringKey(msg.mode == "SEQUENCE" ? "Sequence" : "Normal"))
                         .font(.caption2.weight(.medium)).foregroundStyle(.secondary)
                 }
 

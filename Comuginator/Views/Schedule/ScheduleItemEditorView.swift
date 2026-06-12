@@ -60,7 +60,7 @@ struct ScheduleItemEditorView: View {
                                     if isOn { weekdaysSelected.remove(day) }
                                     else { weekdaysSelected.insert(day) }
                                 } label: {
-                                    Text(weekdayLabels[day] ?? "?")
+                                    Text(LocalizedStringKey(weekdayLabels[day] ?? "?"))
                                         .font(.caption2.weight(.medium))
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 8)
@@ -90,7 +90,7 @@ struct ScheduleItemEditorView: View {
                     Section { Text(statusText).font(.footnote).foregroundStyle(.red) }
                 }
             }
-            .navigationTitle(isEditing ? "Edit Schedule" : "New Schedule")
+            .navigationTitle(Text(LocalizedStringKey(isEditing ? "Edit Schedule" : "New Schedule")))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

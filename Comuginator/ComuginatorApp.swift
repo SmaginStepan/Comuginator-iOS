@@ -11,6 +11,7 @@ struct ComuginatorApp: App {
     @StateObject private var notificationRouter = NotificationRouter.shared
 
     @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("appLanguage") private var appLanguage = "system"
 
     init() {
         BackgroundTaskHandler.register()
@@ -20,6 +21,10 @@ struct ComuginatorApp: App {
     var body: some Scene {
         WindowGroup {
             rootView
+                // In-app language override (SwiftUI text re-resolves live)
+                .environment(\.locale, appLanguage == "system"
+                             ? .autoupdatingCurrent
+                             : Locale(identifier: appLanguage))
                 .environmentObject(notificationRouter)
                 // Present IncomingMessageView when a push notification is tapped
                 .sheet(item: Binding(

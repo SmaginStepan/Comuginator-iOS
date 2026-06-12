@@ -17,6 +17,9 @@ struct SettingsView: View {
     @State private var notificationRules = NotificationSettingsStore.shared.getRules()
     @State private var showAddRule = false
 
+    // Language ("system" or a language code)
+    @AppStorage("appLanguage") private var appLanguage = "system"
+
     var body: some View {
         Form {
             // ── Profile ──────────────────────────────────────────────────
@@ -48,7 +51,7 @@ struct SettingsView: View {
                         Text(vm.myUser?.name ?? SessionStore.shared.userName ?? "—")
                             .font(.headline)
 
-                        Text(vm.role == "PARENT" ? "Parent" : "Child")
+                        Text(LocalizedStringKey(vm.role == "PARENT" ? "Parent" : "Child"))
                             .font(.caption.weight(.medium))
                             .padding(.horizontal, 8).padding(.vertical, 3)
                             .background(
@@ -75,7 +78,7 @@ struct SettingsView: View {
             // ── Device ───────────────────────────────────────────────────
             Section("This Device") {
                 LabeledContent("Name") {
-                    Text(vm.deviceName.isEmpty ? "Not set" : vm.deviceName)
+                    (vm.deviceName.isEmpty ? Text("Not set") : Text(vm.deviceName))
                         .foregroundStyle(vm.deviceName.isEmpty ? .secondary : .primary)
                 }
                 Button("Rename Device") {
@@ -121,6 +124,24 @@ struct SettingsView: View {
             }
 
             // ── App info ─────────────────────────────────────────────────
+            // ── Language ─────────────────────────────────────────────────
+            Section("Language") {
+                Picker("Language", selection: $appLanguage) {
+                    Text("System").tag("system")
+                    Text(verbatim: "English").tag("en")
+                    Text(verbatim: "Español").tag("es")
+                    Text(verbatim: "Русский").tag("ru")
+                }
+                .onChange(of: appLanguage) { _, lang in
+                    // Foundation-based strings follow on next launch
+                    if lang == "system" {
+                        UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+                    } else {
+                        UserDefaults.standard.set([lang], forKey: "AppleLanguages")
+                    }
+                }
+            }
+
             Section("App") {
                 LabeledContent("Version", value: "\(vm.appVersion) (\(vm.buildNumber))")
             }
@@ -229,7 +250,7 @@ private struct NotificationRuleRow: View {
             Image(systemName: rule.enable ? "bell.fill" : "bell.slash.fill")
                 .foregroundStyle(rule.enable ? .green : .orange)
             VStack(alignment: .leading, spacing: 2) {
-                Text(rule.enable ? "Turn on" : "Turn off").font(.subheadline)
+                Text(LocalizedStringKey(rule.enable ? "Turn on" : "Turn off")).font(.subheadline)
                 Text(scheduleText).font(.caption).foregroundStyle(.secondary)
             }
         }
@@ -277,7 +298,7 @@ private struct NotificationRuleEditorSheet: View {
                                     if isOn { weekdaysSelected.remove(day) }
                                     else { weekdaysSelected.insert(day) }
                                 } label: {
-                                    Text(weekdayLabels[day] ?? "?")
+                                    Text(LocalizedStringKey(weekdayLabels[day] ?? "?"))
                                         .font(.caption2.weight(.medium))
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 8)

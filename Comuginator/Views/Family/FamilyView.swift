@@ -104,7 +104,7 @@ struct FamilyView: View {
                     }
                 }
             }
-            .navigationTitle(vm.familyName.isEmpty ? "Family" : vm.familyName)
+            .navigationTitle(vm.familyName.isEmpty ? Text("Family") : Text(vm.familyName))
             .navigationBarTitleDisplayMode(.large)
             .toolbar { toolbar }
             .navigationDestination(for: FamilyDestination.self) { destination in

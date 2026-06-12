@@ -26,7 +26,7 @@ struct ChildHomeView: View {
                 boardGrid
             }
         }
-        .navigationTitle(vm.breadcrumbs.last?.name ?? "Child Home")
+        .navigationTitle(vm.breadcrumbs.last.map { Text($0.name) } ?? Text("Child Home"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
         .refreshable { await vm.load(parentId: vm.currentParentId) }
@@ -93,7 +93,7 @@ struct ChildHomeView: View {
         return Group {
             if displayNodes.isEmpty {
                 ContentUnavailableView(
-                    vm.isParent ? "No Nodes Yet" : "Nothing Here",
+                    LocalizedStringKey(vm.isParent ? "No Nodes Yet" : "Nothing Here"),
                     systemImage: "square.grid.2x2",
                     description: Text(vm.isParent ? "Tap the pencil to switch to Editor and add tiles." : "")
                 )
@@ -306,7 +306,7 @@ private struct EditorRowView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(label).font(.subheadline)
                 HStack(spacing: 6) {
-                    Text(isMenu ? "Menu" : "Action")
+                    Text(LocalizedStringKey(isMenu ? "Menu" : "Action"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     if !node.isVisible {
@@ -421,7 +421,7 @@ struct NodeEditorSheet: View {
                     Text("Hidden tiles are invisible to the child but remain editable.")
                 }
             }
-            .navigationTitle(isEditing ? "Edit Tile" : "New Tile")
+            .navigationTitle(Text(LocalizedStringKey(isEditing ? "Edit Tile" : "New Tile")))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
