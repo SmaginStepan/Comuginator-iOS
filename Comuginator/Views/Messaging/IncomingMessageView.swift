@@ -160,7 +160,7 @@ struct IncomingMessageView: View {
                         .stroke(isSelected || isCurrentStep ? Color.blue : .clear, lineWidth: 3)
                 )
 
-                Text(reply.label ?? reply.id)
+                Text(reply.isWaitStep ? "⏳ \(reply.seconds ?? 0)s" : (reply.label ?? reply.id))
                     .font(.caption).lineLimit(2).multilineTextAlignment(.center)
             }
             .padding(8)

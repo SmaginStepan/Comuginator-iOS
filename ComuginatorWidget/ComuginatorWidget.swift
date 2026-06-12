@@ -72,7 +72,8 @@ enum WidgetDataLoader {
 
     struct CardDto: Decodable { let id: String; let label: String; let imageUrl: String? }
     struct ReplyShort: Decodable { let id: String; let reply: [CardDto] }
-    struct SuggestedReply: Decodable { let id: String }
+    // WAIT steps come without an id ({"type":"WAIT","seconds":300})
+    struct SuggestedReply: Decodable { let id: String?; let type: String? }
     struct MessageItem: Decodable {
         let id: String
         let toUserId: String

@@ -120,7 +120,7 @@ final class IncomingMessageViewModel: ObservableObject {
     }
 
     private func handleSequenceStep(_ step: AacSuggestedReplyDto) async {
-        if step.type == "wait", let secs = step.seconds {
+        if step.isWaitStep, let secs = step.seconds {
             await runWaitTimer(seconds: secs)
         } else {
             await blink(cardId: step.id)

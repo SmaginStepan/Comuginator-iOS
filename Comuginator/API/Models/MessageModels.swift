@@ -17,6 +17,29 @@ struct AacSuggestedReplyDto: Codable {
     let sourceRef: String?
     let storageKey: String?
     let seconds: Int?
+
+    var isWaitStep: Bool { type.uppercased() == "WAIT" }
+
+    init(type: String, id: String, label: String?, imageUrl: String?,
+         source: String?, sourceRef: String?, storageKey: String?, seconds: Int?) {
+        self.type = type; self.id = id; self.label = label; self.imageUrl = imageUrl
+        self.source = source; self.sourceRef = sourceRef
+        self.storageKey = storageKey; self.seconds = seconds
+    }
+
+    // The server omits `type` for plain cards and omits `id` for WAIT steps
+    // ({"type":"WAIT","seconds":300}) — default both so decoding never fails.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        seconds    = try c.decodeIfPresent(Int.self, forKey: .seconds)
+        type       = try c.decodeIfPresent(String.self, forKey: .type) ?? "CARD"
+        id         = try c.decodeIfPresent(String.self, forKey: .id) ?? "WAIT_\(UUID().uuidString)"
+        label      = try c.decodeIfPresent(String.self, forKey: .label)
+        imageUrl   = try c.decodeIfPresent(String.self, forKey: .imageUrl)
+        source     = try c.decodeIfPresent(String.self, forKey: .source)
+        sourceRef  = try c.decodeIfPresent(String.self, forKey: .sourceRef)
+        storageKey = try c.decodeIfPresent(String.self, forKey: .storageKey)
+    }
 }
 
 struct AacUserDto: Decodable {
