@@ -79,6 +79,10 @@
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
+/* Begin PBXBuildFile section (SPM) */
+		AB10FB000000000000000001 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = AB10FB000000000000000002 /* FirebaseMessaging */; };
+/* End PBXBuildFile section (SPM) */
+
 /* Begin PBXFrameworksBuildPhase section */
 		7F2AE1792FDB16A1003D89D1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -93,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB10FB000000000000000001 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +176,7 @@
 			);
 			name = Comuginator;
 			packageProductDependencies = (
+				AB10FB000000000000000002 /* FirebaseMessaging */,
 			);
 			productName = Comuginator;
 			productReference = 7F5C22642FC869BC000F247D /* Comuginator.app */;
@@ -205,6 +211,9 @@
 			);
 			mainGroup = 7F5C225B2FC869BC000F247D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7F5C22652FC869BC000F247D /* Products */;
 			projectDirPath = "";
@@ -533,6 +542,25 @@
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB10FB000000000000000002 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AB10FB000000000000000003 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCConfigurationList section */
 		7F2AE1932FDB16A2003D89D1 /* Build configuration list for PBXNativeTarget "ComuginatorWidgetExtension" */ = {

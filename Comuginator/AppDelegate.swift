@@ -1,6 +1,8 @@
 import UIKit
 import UserNotifications
 import WidgetKit
+import FirebaseCore
+import FirebaseMessaging
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -8,13 +10,9 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
-
-        // TODO: When you add the Firebase iOS SDK via Swift Package Manager:
-        //   1. import FirebaseCore
-        //   2. Uncomment → FirebaseApp.configure()
-        //   Then replace the raw APNs token below with Messaging.messaging().token
-
         return true
     }
 
@@ -24,15 +22,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        // TODO: When Firebase is added, set:
-        //   Messaging.messaging().apnsToken = deviceToken
-        //   Then read the FCM token with Messaging.messaging().token(completion:)
-        //
-        // For now we send the raw APNs hex token so the server field is populated.
-        let tokenHex = deviceToken.map { String(format: "%02x", $0) }.joined()
-        Task {
-            try? await APIClient.shared.updateFcmToken(FcmTokenRequest(fcmToken: tokenHex))
-        }
+        // Hand the APNs token to Firebase; the FCM token arrives via MessagingDelegate.
+        Messaging.messaging().apnsToken = deviceToken
     }
 
     func application(
@@ -40,6 +31,19 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         print("[APNs] Registration failed: \(error)")
+    }
+}
+
+// MARK: - MessagingDelegate (FCM)
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let fcmToken else { return }
+        print("[FCM] Token received")
+        guard SessionStore.shared.isConnected else { return }
+        Task {
+            _ = try? await APIClient.shared.updateFcmToken(FcmTokenRequest(fcmToken: fcmToken))
+        }
     }
 }
 

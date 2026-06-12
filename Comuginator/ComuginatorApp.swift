@@ -84,13 +84,18 @@ struct ComuginatorApp: App {
         Task {
             let center = UNUserNotificationCenter.current()
             let settings = await center.notificationSettings()
-            guard settings.authorizationStatus == .notDetermined else { return }
 
-            let granted = (try? await center.requestAuthorization(options: [.alert, .badge, .sound])) ?? false
-            if granted {
-                await MainActor.run {
-                    UIApplication.shared.registerForRemoteNotifications()
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                let granted = (try? await center.requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+                if granted {
+                    await MainActor.run { UIApplication.shared.registerForRemoteNotifications() }
                 }
+            case .authorized, .provisional, .ephemeral:
+                // Re-register every launch so the APNs/FCM token stays fresh
+                await MainActor.run { UIApplication.shared.registerForRemoteNotifications() }
+            default:
+                break
             }
         }
     }
