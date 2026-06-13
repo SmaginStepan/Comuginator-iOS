@@ -4,12 +4,18 @@ import CoreImage.CIFilterBuiltins
 // MARK: - Navigation destinations
 
 enum FamilyDestination: Hashable {
-    case composeMessage(targetUserId: String, targetUserName: String)
     case messageHistory(targetUserId: String, targetUserName: String)
     case library
     case childHome
     case schedule
     case settings
+}
+
+/// Identifies the recipient for a compose-message sheet.
+struct ComposeTarget: Identifiable {
+    let userId: String
+    let userName: String
+    var id: String { userId }
 }
 
 // MARK: - Main view
@@ -41,6 +47,9 @@ struct FamilyView: View {
     // Join another family
     @State private var showJoinAnother = false
     @State private var joinAnotherCode = ""
+
+    // Compose message (presented as a sheet — it has its own NavigationStack)
+    @State private var composeTarget: ComposeTarget?
 
     var body: some View {
         NavigationStack(path: $navPath) {
@@ -81,7 +90,7 @@ struct FamilyView: View {
                         UserHeaderView(
                             user: user,
                             isParentViewer: vm.isParent,
-                            onSend: { navigateTo(.composeMessage(targetUserId: user.id, targetUserName: user.name)) },
+                            onSend: { composeTarget = ComposeTarget(userId: user.id, userName: user.name) },
                             onHistory: { navigateTo(.messageHistory(targetUserId: user.id, targetUserName: user.name)) },
                             onRename: { renameUserTarget = user; renameUserText = user.name },
                             onDelete: { deleteUserTarget = user }
@@ -109,8 +118,6 @@ struct FamilyView: View {
             .toolbar { toolbar }
             .navigationDestination(for: FamilyDestination.self) { destination in
                 switch destination {
-                case .composeMessage(let id, let name):
-                    ComposeMessageView(targetUserId: id, targetUserName: name)
                 case .messageHistory(let id, let name):
                     MessageHistoryView(targetUserId: id, targetUserName: name)
                 case .library:   LibraryView()
@@ -131,6 +138,10 @@ struct FamilyView: View {
         .onDisappear { vm.stopRefreshLoop() }
         .onChange(of: vm.shouldLogout) { _, logout in
             if logout { appState.isLoggedIn = false }
+        }
+        // Compose message sheet
+        .sheet(item: $composeTarget) { target in
+            ComposeMessageView(targetUserId: target.userId, targetUserName: target.userName)
         }
         // Join another family
         .alert("Join Another Family", isPresented: $showJoinAnother) {
@@ -364,11 +375,20 @@ private struct UserHeaderView: View {
 
             if isParentViewer {
                 Button { onSend() } label: {
-                    Image(systemName: "bubble.left.fill").foregroundStyle(.blue)
+                    Label("Send", systemImage: "paperplane.fill")
+                        .labelStyle(.titleAndIcon)
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                        .background(Color.blue, in: Capsule())
+                        .foregroundStyle(.white)
                 }
                 .buttonStyle(.plain)
                 Button { onHistory() } label: {
-                    Image(systemName: "clock.fill").foregroundStyle(.secondary)
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.body)
+                        .foregroundStyle(.blue)
+                        .padding(7)
+                        .background(Color.blue.opacity(0.12), in: Circle())
                 }
                 .buttonStyle(.plain)
             }
@@ -377,7 +397,9 @@ private struct UserHeaderView: View {
                 Button("Rename") { onRename() }
                 Button("Delete", role: .destructive) { onDelete() }
             } label: {
-                Image(systemName: "ellipsis").foregroundStyle(.secondary)
+                Image(systemName: "ellipsis.circle")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
         }
