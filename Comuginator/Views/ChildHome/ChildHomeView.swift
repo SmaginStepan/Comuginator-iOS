@@ -134,17 +134,22 @@ struct ChildHomeView: View {
 
     private var editorList: some View {
         List {
-            // Hide invisible / Show hidden (mirrors Android editor toggle) — above the list
-            if vm.hideInvisibleInEditor {
-                Section {
+            // Action buttons sit above the tile list (mirrors Android editor).
+            Section {
+                Button {
+                    showAddSheet = true
+                } label: {
+                    Label("Add Tile", systemImage: "plus.circle")
+                }
+
+                // Hide invisible / Show hidden toggle
+                if vm.hideInvisibleInEditor {
                     Button {
                         vm.setHideInvisible(false)
                     } label: {
                         Label("Show hidden", systemImage: "eye")
                     }
-                }
-            } else if vm.nodes.contains(where: { !$0.isVisible }) {
-                Section {
+                } else if vm.nodes.contains(where: { !$0.isVisible }) {
                     Button {
                         vm.setHideInvisible(true)
                     } label: {
@@ -196,14 +201,6 @@ struct ChildHomeView: View {
                 .onMove { from, to in
                     vm.nodes.move(fromOffsets: from, toOffset: to)
                     Task { await vm.persistNodeOrder() }
-                }
-            }
-
-            Section {
-                Button {
-                    showAddSheet = true
-                } label: {
-                    Label("Add Tile", systemImage: "plus.circle")
                 }
             }
         }

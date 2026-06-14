@@ -67,6 +67,21 @@ struct FamilyView: View {
                     inviteSection(invite)
                 }
 
+                // Quick-access buttons sit above the users list (mirrors Android).
+                Section {
+                    NavigationLink(value: FamilyDestination.library) {
+                        Label("Library", systemImage: "photo.on.rectangle")
+                    }
+                    NavigationLink(value: FamilyDestination.childHome) {
+                        Label("Child Home (Editor)", systemImage: "house")
+                    }
+                    if vm.isParent {
+                        NavigationLink(value: FamilyDestination.schedule) {
+                            Label("Schedule", systemImage: "calendar.badge.clock")
+                        }
+                    }
+                }
+
                 // Users + their devices
                 ForEach(vm.users, id: \.id) { user in
                     Section {
@@ -95,21 +110,6 @@ struct FamilyView: View {
                             onRename: { renameUserTarget = user; renameUserText = user.name },
                             onDelete: { deleteUserTarget = user }
                         )
-                    }
-                }
-
-                // Quick-access buttons
-                Section {
-                    NavigationLink(value: FamilyDestination.library) {
-                        Label("Library", systemImage: "photo.on.rectangle")
-                    }
-                    NavigationLink(value: FamilyDestination.childHome) {
-                        Label("Child Home (Editor)", systemImage: "house")
-                    }
-                    if vm.isParent {
-                        NavigationLink(value: FamilyDestination.schedule) {
-                            Label("Schedule", systemImage: "calendar.badge.clock")
-                        }
                     }
                 }
             }
