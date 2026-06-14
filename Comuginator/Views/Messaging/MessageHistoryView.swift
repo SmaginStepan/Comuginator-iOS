@@ -51,6 +51,7 @@ struct MessageHistoryView: View {
                 targetUserId: targetUserId,
                 targetUserName: targetUserName,
                 initialMode: msg.mode,
+                initialMessageCards: msg.message,
                 initialReplyCards: msg.suggestedReplies,
                 initialRequiredReplyCount: msg.requiredReplyCount ?? 1
             )

@@ -6,15 +6,15 @@ import SwiftUI
 final class ComposeMessageViewModel: ObservableObject {
 
     // MARK: - Compose state
+    /// The message is preset (e.g. when repeating a message) and shown read-only.
     @Published var messageCards: [AacCardDto] = []
     @Published var replyCards: [AacSuggestedReplyDto] = []
     @Published var mode: String = "NORMAL"
     @Published var allowMultipleReplies = false
     @Published var requiredReplyCount: Int = 2
 
-    // MARK: - Library picker state
+    // MARK: - Library (used to resolve picked item ids into reply cards)
     @Published var libraryItems: [LibraryItemDto] = []
-    @Published var librarySets: [LibrarySetDto] = []
     @Published var isLoadingLibrary = false
 
     // MARK: - Send state
@@ -22,9 +22,13 @@ final class ComposeMessageViewModel: ObservableObject {
     @Published var statusText = ""
     @Published var isSent = false
 
-    // MARK: - Initialise from a repeated message
-    func populate(mode: String, replyCards: [AacSuggestedReplyDto], requiredReplyCount: Int = 1) {
+    // MARK: - Initialise from a preset / repeated message
+    func populate(mode: String,
+                  messageCards: [AacCardDto],
+                  replyCards: [AacSuggestedReplyDto],
+                  requiredReplyCount: Int = 1) {
         self.mode = mode
+        self.messageCards = messageCards
         self.replyCards = replyCards
         if requiredReplyCount > 1 {
             self.allowMultipleReplies = true
@@ -40,28 +44,31 @@ final class ComposeMessageViewModel: ObservableObject {
         isLoadingLibrary = true
         defer { isLoadingLibrary = false }
         do {
-            async let itemsResponse = APIClient.shared.getLibraryItems()
-            async let setsResponse  = APIClient.shared.getLibrarySets()
-            libraryItems = try await itemsResponse.items
-            librarySets  = try await setsResponse.sets
+            libraryItems = try await APIClient.shared.getLibraryItems().items
         } catch {
             statusText = "Library load failed: \(error.localizedDescription)"
         }
     }
 
-    // MARK: - Card management
+    // MARK: - Suggested-reply management
 
-    func addMessageCard(_ item: LibraryItemDto) {
-        let card = AacCardDto(id: item.id, label: item.label,
-                              imageUrl: item.imageUrl, source: item.source, sourceRef: item.sourceRef)
-        messageCards.append(card)
+    /// The shared picker returns a library item id. Resolve it into a reply card,
+    /// reloading the library if the item was just created (ARASAAC / photo upload).
+    func addReplyCard(byId id: String) async {
+        guard !replyCards.contains(where: { $0.id == id }) else { return }
+        if let item = libraryItems.first(where: { $0.id == id }) {
+            appendReply(item)
+            return
+        }
+        await loadLibrary()
+        if let item = libraryItems.first(where: { $0.id == id }) {
+            appendReply(item)
+        } else {
+            statusText = "Couldn't load the selected card"
+        }
     }
 
-    func removeMessageCard(at offsets: IndexSet) { messageCards.remove(atOffsets: offsets) }
-    func moveMessageCard(from source: IndexSet, to dest: Int) { messageCards.move(fromOffsets: source, toOffset: dest) }
-
-    func addReplyCard(_ item: LibraryItemDto) {
-        guard !replyCards.contains(where: { $0.id == item.id }) else { return }
+    private func appendReply(_ item: LibraryItemDto) {
         replyCards.append(AacSuggestedReplyDto(
             type: "card", id: item.id, label: item.label,
             imageUrl: item.imageUrl, source: item.source, sourceRef: item.sourceRef,
@@ -70,11 +77,12 @@ final class ComposeMessageViewModel: ObservableObject {
     }
 
     func removeReplyCard(at offsets: IndexSet) { replyCards.remove(atOffsets: offsets) }
+    func moveReplyCard(from source: IndexSet, to dest: Int) { replyCards.move(fromOffsets: source, toOffset: dest) }
 
     // MARK: - Send
 
     func sendMessage(targetUserId: String) async {
-        guard !messageCards.isEmpty else { statusText = "Add at least one card"; return }
+        guard !replyCards.isEmpty else { statusText = "Add at least one suggested response"; return }
         isLoading = true
         statusText = "Sending…"
         defer { isLoading = false }

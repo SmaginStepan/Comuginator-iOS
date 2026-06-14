@@ -4,38 +4,38 @@ struct ComposeMessageView: View {
     let targetUserId: String
     let targetUserName: String
     var initialMode: String = "NORMAL"
+    var initialMessageCards: [AacCardDto] = []
     var initialReplyCards: [AacSuggestedReplyDto] = []
     var initialRequiredReplyCount: Int = 1
 
     @StateObject private var vm = ComposeMessageViewModel()
     @Environment(\.dismiss) private var dismiss
 
-    @State private var showMessageCardPicker = false
     @State private var showReplyCardPicker = false
 
     var body: some View {
         NavigationStack {
             Form {
-                // ── Message cards ──────────────────────────────────────────
+                // ── Message (read-only / preset) ───────────────────────────
                 Section {
                     if vm.messageCards.isEmpty {
-                        Text("No cards yet — tap Add Card")
+                        Text("No message — responses only")
                             .foregroundStyle(.secondary)
                             .font(.subheadline)
                     } else {
-                        ForEach(vm.messageCards, id: \.id) { card in
-                            CardRow(card: card)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(vm.messageCards, id: \.id) { card in
+                                    CardTile(card: card, opacity: 1)
+                                }
+                            }
+                            .padding(.vertical, 4)
                         }
-                        .onDelete { vm.removeMessageCard(at: $0) }
-                        .onMove  { vm.moveMessageCard(from: $0, to: $1) }
-                    }
-                    Button { showMessageCardPicker = true } label: {
-                        Label("Add Card", systemImage: "plus.circle")
                     }
                 } header: {
-                    Text("Message Cards")
+                    Text("Message")
                 } footer: {
-                    Text("What you are saying. Long-press to reorder, swipe to delete.")
+                    Text("What you are saying. Set when the message was created — not editable here.")
                         .font(.caption)
                 }
 
@@ -48,10 +48,10 @@ struct ComposeMessageView: View {
                     .pickerStyle(.segmented)
                 }
 
-                // ── Reply cards ────────────────────────────────────────────
+                // ── Suggested responses (editable) ─────────────────────────
                 Section {
                     if vm.replyCards.isEmpty {
-                        Text("No reply cards — tap Add Reply Card")
+                        Text("No responses yet — tap Add Response")
                             .foregroundStyle(.secondary).font(.subheadline)
                     } else {
                         ForEach(vm.replyCards, id: \.id) { card in
@@ -62,14 +62,15 @@ struct ComposeMessageView: View {
                             }
                         }
                         .onDelete { vm.removeReplyCard(at: $0) }
+                        .onMove   { vm.moveReplyCard(from: $0, to: $1) }
                     }
                     Button { showReplyCardPicker = true } label: {
-                        Label("Add Reply Card", systemImage: "plus.circle")
+                        Label("Add Response", systemImage: "plus.circle")
                     }
                 } header: {
-                    Text("Suggested Replies")
+                    Text("Suggested Responses")
                 } footer: {
-                    Text("Cards the recipient can choose from as a reply.")
+                    Text("Cards the recipient can choose from as a reply. Add from your library, ARASAAC, or your photos.")
                         .font(.caption)
                 }
 
@@ -104,9 +105,9 @@ struct ComposeMessageView: View {
                         Task { await vm.sendMessage(targetUserId: targetUserId) }
                     }
                     .bold()
-                    .disabled(vm.isLoading || vm.messageCards.isEmpty)
+                    .disabled(vm.isLoading || vm.replyCards.isEmpty)
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     EditButton()
                 }
             }
@@ -114,20 +115,15 @@ struct ComposeMessageView: View {
             .onChange(of: vm.isSent) { _, sent in if sent { dismiss() } }
         }
         .task {
-            vm.populate(mode: initialMode, replyCards: initialReplyCards,
+            vm.populate(mode: initialMode,
+                        messageCards: initialMessageCards,
+                        replyCards: initialReplyCards,
                         requiredReplyCount: initialRequiredReplyCount)
             await vm.loadLibrary()
         }
-        .sheet(isPresented: $showMessageCardPicker) {
-            LibraryItemPickerSheet(items: vm.libraryItems, isLoading: vm.isLoadingLibrary) {
-                vm.addMessageCard($0)
-                showMessageCardPicker = false
-            }
-        }
         .sheet(isPresented: $showReplyCardPicker) {
-            LibraryItemPickerSheet(items: vm.libraryItems, isLoading: vm.isLoadingLibrary) {
-                vm.addReplyCard($0)
-                showReplyCardPicker = false
+            LibraryItemPickerView { itemId in
+                Task { await vm.addReplyCard(byId: itemId) }
             }
         }
     }
@@ -136,61 +132,5 @@ struct ComposeMessageView: View {
         ProgressView().scaleEffect(1.5)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.ultraThinMaterial)
-    }
-}
-
-// MARK: - Card row
-
-private struct CardRow: View {
-    let card: AacCardDto
-    var body: some View {
-        HStack(spacing: 10) {
-            AuthImageView(urlString: card.imageUrl)
-                .frame(width: 44, height: 44)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-            Text(card.label).font(.subheadline)
-        }
-    }
-}
-
-// MARK: - Inline library picker sheet
-
-struct LibraryItemPickerSheet: View {
-    let items: [LibraryItemDto]
-    let isLoading: Bool
-    let onSelect: (LibraryItemDto) -> Void
-
-    @State private var search = ""
-
-    private var filtered: [LibraryItemDto] {
-        search.isEmpty ? items : items.filter { $0.label.localizedCaseInsensitiveContains(search) }
-    }
-
-    var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("Loading library…")
-                } else if items.isEmpty {
-                    ContentUnavailableView("No Items", systemImage: "photo.on.rectangle")
-                } else {
-                    List(filtered, id: \.id) { item in
-                        Button {
-                            onSelect(item)
-                        } label: {
-                            HStack(spacing: 12) {
-                                AuthImageView(urlString: item.imageUrl)
-                                    .frame(width: 48, height: 48)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                Text(item.label).foregroundStyle(.primary)
-                            }
-                        }
-                    }
-                    .searchable(text: $search, prompt: "Search cards")
-                }
-            }
-            .navigationTitle("Choose Card")
-            .navigationBarTitleDisplayMode(.inline)
-        }
     }
 }
