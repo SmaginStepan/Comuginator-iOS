@@ -120,16 +120,27 @@ struct ChildHomeView: View {
         List {
             Section {
                 ForEach(vm.nodes) { node in
-                    EditorRowView(node: node)
-                        .contentShape(Rectangle())
-                        .onTapGesture { editTarget = node }
-                        .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                Task { await vm.deleteNode(nodeId: node.id) }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+                    EditorRowView(node: node) {
+                        Task { await vm.toggleVisibility(node) }
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture { editTarget = node }
+                    .swipeActions(edge: .leading) {
+                        Button {
+                            Task { await vm.toggleVisibility(node) }
+                        } label: {
+                            Label(node.isVisible ? "Hide" : "Show",
+                                  systemImage: node.isVisible ? "eye.slash" : "eye")
                         }
+                        .tint(node.isVisible ? .gray : .green)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            Task { await vm.deleteNode(nodeId: node.id) }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
                 }
                 .onMove { from, to in
                     vm.nodes.move(fromOffsets: from, toOffset: to)
@@ -199,9 +210,14 @@ private struct NodeTileView: View {
     private var imageUrl: String? { node.item?.imageUrl }
     private var isMenu: Bool { node.type == "MENU" }
 
+    private var isHiddenForParent: Bool { vm.isParent && !node.isVisible }
+
     private var opacity: Double {
-        guard let blinkId = vm.blinkingNodeId else { return 1.0 }
-        return node.id == blinkId ? vm.blinkOpacity : 0.1
+        if let blinkId = vm.blinkingNodeId {
+            return node.id == blinkId ? vm.blinkOpacity : 0.1
+        }
+        // Fade hidden tiles so parents can tell them apart from visible ones.
+        return isHiddenForParent ? 0.4 : 1.0
     }
 
     var body: some View {
@@ -265,11 +281,19 @@ private struct NodeTileView: View {
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(node.isVisible
-                          ? Color(.systemBackground)
-                          : Color.secondary.opacity(0.08))
-                    .shadow(color: .black.opacity(0.07), radius: 4, y: 2)
+                    .fill(isHiddenForParent
+                          ? Color.secondary.opacity(0.12)
+                          : Color(.systemBackground))
+                    .shadow(color: .black.opacity(isHiddenForParent ? 0 : 0.07), radius: 4, y: 2)
             )
+            .overlay {
+                // Dashed outline marks hidden tiles for parents.
+                if isHiddenForParent {
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
         .buttonStyle(.plain)
         .opacity(opacity)
@@ -281,6 +305,7 @@ private struct NodeTileView: View {
 
 private struct EditorRowView: View {
     let node: ChildHomeNodeDto
+    let onToggleVisibility: () -> Void
 
     private var label: String {
         node.labelOverride ?? node.item?.label ?? "(no label)"
@@ -324,10 +349,24 @@ private struct EditorRowView: View {
 
             Spacer()
 
+            // Quick show/hide toggle
+            Button(action: onToggleVisibility) {
+                Image(systemName: node.isVisible ? "eye.fill" : "eye.slash.fill")
+                    .font(.body)
+                    .foregroundStyle(node.isVisible ? .blue : .secondary)
+                    .frame(width: 36, height: 36)
+                    .background(
+                        (node.isVisible ? Color.blue : Color.secondary).opacity(0.12),
+                        in: Circle()
+                    )
+            }
+            .buttonStyle(.borderless)
+
             Image(systemName: "pencil.circle")
                 .foregroundStyle(.blue)
         }
         .padding(.vertical, 2)
+        .opacity(node.isVisible ? 1.0 : 0.55)
     }
 }
 

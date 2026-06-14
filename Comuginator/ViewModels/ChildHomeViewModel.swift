@@ -48,7 +48,8 @@ final class ChildHomeViewModel: ObservableObject {
         do {
             let response = try await APIClient.shared.getChildHomeNodes(parentId: parentId)
             nodes = response.items.sorted { $0.sortOrder < $1.sortOrder }
-            statusText = ""
+            statusText = nodes.isEmpty ? "No tiles" : ""
+            print("[ChildHome] loaded \(nodes.count) nodes (parentId: \(parentId ?? "root"))")
         } catch {
             statusText = "Failed to load: \(error.localizedDescription)"
         }
@@ -176,6 +177,24 @@ final class ChildHomeViewModel: ObservableObject {
         do {
             let result = try await APIClient.shared.updateChildHomeNode(nodeId: nodeId, body: body)
             if let idx = nodes.firstIndex(where: { $0.id == nodeId }) {
+                nodes[idx] = result.item
+            }
+        } catch {
+            statusText = "Failed to update: \(error.localizedDescription)"
+        }
+    }
+
+    /// Quick show/hide toggle — patches only `isVisible`.
+    func toggleVisibility(_ node: ChildHomeNodeDto) async {
+        let body = UpdateChildHomeNodeRequest(
+            itemId: nil, parentId: nil, type: nil, sortOrder: nil,
+            targetMode: nil, targetUserIds: nil,
+            blinkEnabled: nil, blinkSeconds: nil,
+            labelOverride: nil, isVisible: !node.isVisible
+        )
+        do {
+            let result = try await APIClient.shared.updateChildHomeNode(nodeId: node.id, body: body)
+            if let idx = nodes.firstIndex(where: { $0.id == node.id }) {
                 nodes[idx] = result.item
             }
         } catch {
