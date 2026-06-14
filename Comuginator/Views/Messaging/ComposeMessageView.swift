@@ -16,28 +16,8 @@ struct ComposeMessageView: View {
     var body: some View {
         NavigationStack {
             Form {
-                // ── Message (read-only / preset) ───────────────────────────
-                Section {
-                    if vm.messageCards.isEmpty {
-                        Text("No message — responses only")
-                            .foregroundStyle(.secondary)
-                            .font(.subheadline)
-                    } else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 10) {
-                                ForEach(vm.messageCards, id: \.id) { card in
-                                    CardTile(card: card, opacity: 1)
-                                }
-                            }
-                            .padding(.vertical, 4)
-                        }
-                    }
-                } header: {
-                    Text("Message")
-                } footer: {
-                    Text("What you are saying. Set when the message was created — not editable here.")
-                        .font(.caption)
-                }
+                // The message is preset and sent as-is; it is not shown or
+                // editable here — this dialog only configures the responses.
 
                 // ── Mode ───────────────────────────────────────────────────
                 Section("Mode") {
