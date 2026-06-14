@@ -94,15 +94,15 @@ final class ChildHomeViewModel: ObservableObject {
     func startPreview() {
         stopBlink()
         previewMode = true
-        breadcrumbs.removeAll()
-        Task { await load(parentId: nil) }
+        // Preview the current menu/submenu the parent is in (matches Android).
+        Task { await load(parentId: currentParentId) }
     }
 
     func stopPreview() {
         stopBlink()
         previewMode = false
-        breadcrumbs.removeAll()
-        Task { await load(parentId: nil) }
+        // Return to editing the same submenu the parent was previewing.
+        Task { await load(parentId: currentParentId) }
     }
 
     /// Preview tap on an ACTION tile — blink locally only, never notify parents.
