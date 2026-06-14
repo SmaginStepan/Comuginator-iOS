@@ -16,14 +16,28 @@ struct IncomingMessageView: View {
                     // ── Message cards ──────────────────────────────────────
                     if let msg = vm.message {
                         VStack(alignment: .leading, spacing: 8) {
-                            Label("From \(msg.fromUser.name)", systemImage: "person.fill")
-                                .font(.subheadline).foregroundStyle(.secondary)
-
-                            if !msg.message.isEmpty {
-                                if vm.isRequestOnly {
-                                    Text("Request")
-                                        .font(.caption).foregroundStyle(.secondary)
+                            HStack(spacing: 8) {
+                                Group {
+                                    if msg.fromUser.avatarImageUrl != nil {
+                                        AuthImageView(urlString: msg.fromUser.avatarImageUrl)
+                                    } else {
+                                        Image(systemName: "person.circle.fill")
+                                            .resizable().foregroundStyle(.secondary)
+                                    }
                                 }
+                                .frame(width: 32, height: 32)
+                                .clipShape(Circle())
+
+                                Text("From \(msg.fromUser.name)")
+                                    .font(.subheadline).foregroundStyle(.secondary)
+                            }
+
+                            // Only request-only messages show their cards; a
+                            // question with suggested replies hides the system
+                            // QUESTION/EXCLAMATION card (matches message history).
+                            if vm.isRequestOnly && !msg.message.isEmpty {
+                                Text("Request")
+                                    .font(.caption).foregroundStyle(.secondary)
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 10) {
                                         ForEach(msg.message, id: \.id) { card in
@@ -95,6 +109,10 @@ struct IncomingMessageView: View {
             .overlay { if vm.isLoading { loadingOverlay } }
         }
         .task { await vm.loadMessage(id: messageId) }
+        .onChange(of: vm.replySuccess) { _, success in
+            // Auto-close as soon as the reply is sent
+            if success { dismiss() }
+        }
     }
 
     // MARK: - Reply header
