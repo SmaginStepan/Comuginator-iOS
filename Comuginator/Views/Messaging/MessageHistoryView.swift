@@ -64,60 +64,45 @@ private struct MessageBubble: View {
     let msg: AacMessageListItemDto
     let isMine: Bool
 
+    private var hasSuggestedReplies: Bool { !msg.suggestedReplies.isEmpty }
+
+    /// Reply options as displayable cards (WAIT steps filtered out).
+    private var suggestedCards: [(id: String, url: String?, label: String)] {
+        msg.suggestedReplies
+            .filter { !$0.isWaitStep }
+            .map { ($0.id, $0.imageUrl, $0.label ?? $0.id) }
+    }
+
     var body: some View {
         HStack {
             if isMine { Spacer(minLength: 40) }
 
             VStack(alignment: isMine ? .trailing : .leading, spacing: 6) {
-                let isRequestOnly = msg.suggestedReplies.isEmpty
-
-                if isRequestOnly {
-                    Text("Request")
-                        .font(.caption2.weight(.medium)).foregroundStyle(.orange)
-                } else {
+                if hasSuggestedReplies {
+                    // A question/exclamation with reply options — hide the system
+                    // message card and show the options + the chosen answer.
                     Text(LocalizedStringKey(msg.mode == "SEQUENCE" ? "Sequence" : "Normal"))
                         .font(.caption2.weight(.medium)).foregroundStyle(.secondary)
-                }
 
-                // Cards row
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(msg.message, id: \.id) { card in
-                            VStack(spacing: 4) {
-                                AuthImageView(urlString: card.imageUrl)
-                                    .frame(width: 56, height: 56)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                Text(card.label)
-                                    .font(.caption2)
-                                    .lineLimit(2)
-                                    .frame(width: 56)
-                                    .multilineTextAlignment(.center)
-                            }
-                        }
-                    }
-                }
+                    Text("Suggested Replies")
+                        .font(.caption2).foregroundStyle(.secondary)
+                    cardRow(suggestedCards)
 
-                // Reply preview (only for messages that expect a reply)
-                if !isRequestOnly {
-                    if let reply = msg.reply {
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrowshape.turn.up.left.fill")
-                                .font(.caption2).foregroundStyle(.secondary)
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 4) {
-                                    ForEach(reply.reply, id: \.id) { card in
-                                        Text(card.label)
-                                            .font(.caption)
-                                            .padding(.horizontal, 8).padding(.vertical, 3)
-                                            .background(.green.opacity(0.15), in: Capsule())
-                                    }
-                                }
-                            }
-                        }
+                    if let reply = msg.reply, !reply.reply.isEmpty {
+                        Text("Selected reply")
+                            .font(.caption2).foregroundStyle(.secondary)
+                        cardRow(reply.reply
+                            .filter { $0.id != "SEQUENCE_COMPLETED" }
+                            .map { ($0.id, $0.imageUrl, $0.label) })
                     } else {
                         Text("Awaiting reply")
                             .font(.caption2).foregroundStyle(.secondary).italic()
                     }
+                } else {
+                    // Request-only: show the message cards.
+                    Text("Request")
+                        .font(.caption2.weight(.medium)).foregroundStyle(.orange)
+                    cardRow(msg.message.map { ($0.id, $0.imageUrl, $0.label) })
                 }
 
                 // Timestamp
@@ -129,6 +114,26 @@ private struct MessageBubble: View {
                         in: RoundedRectangle(cornerRadius: 12))
 
             if !isMine { Spacer(minLength: 40) }
+        }
+    }
+
+    @ViewBuilder
+    private func cardRow(_ cards: [(id: String, url: String?, label: String)]) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(cards, id: \.id) { card in
+                    VStack(spacing: 4) {
+                        AuthImageView(urlString: card.url)
+                            .frame(width: 56, height: 56)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        Text(card.label)
+                            .font(.caption2)
+                            .lineLimit(2)
+                            .frame(width: 56)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+            }
         }
     }
 }

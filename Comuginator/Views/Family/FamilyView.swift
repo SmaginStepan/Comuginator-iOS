@@ -375,7 +375,7 @@ private struct UserHeaderView: View {
 
             if isParentViewer {
                 Button { onSend() } label: {
-                    Label("Send", systemImage: "paperplane.fill")
+                    Label("Send", systemImage: "bubble.left.fill")
                         .labelStyle(.titleAndIcon)
                         .font(.caption.weight(.semibold))
                         .padding(.horizontal, 12).padding(.vertical, 7)
