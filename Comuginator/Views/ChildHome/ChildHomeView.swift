@@ -134,6 +134,25 @@ struct ChildHomeView: View {
 
     private var editorList: some View {
         List {
+            // Hide invisible / Show hidden (mirrors Android editor toggle) — above the list
+            if vm.hideInvisibleInEditor {
+                Section {
+                    Button {
+                        vm.setHideInvisible(false)
+                    } label: {
+                        Label("Show hidden", systemImage: "eye")
+                    }
+                }
+            } else if vm.nodes.contains(where: { !$0.isVisible }) {
+                Section {
+                    Button {
+                        vm.setHideInvisible(true)
+                    } label: {
+                        Label("Hide invisible", systemImage: "eye.slash")
+                    }
+                }
+            }
+
             Section {
                 ForEach(vm.nodes) { node in
                     EditorRowView(node: node) {

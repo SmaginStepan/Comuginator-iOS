@@ -12,6 +12,8 @@ final class ChildHomeViewModel: ObservableObject {
     @Published var isEditorMode = false
     /// Parent is previewing the board exactly as the child sees it.
     @Published var previewMode = false
+    /// Editor option: hide invisible tiles from the editing list.
+    @Published var hideInvisibleInEditor = false
 
     // Blink
     @Published var blinkingNodeId: String? = nil
@@ -49,7 +51,12 @@ final class ChildHomeViewModel: ObservableObject {
         defer { isLoading = false }
         do {
             let response = try await APIClient.shared.getChildHomeNodes(parentId: parentId)
-            nodes = response.items.sorted { $0.sortOrder < $1.sortOrder }
+            var items = response.items.sorted { $0.sortOrder < $1.sortOrder }
+            // Editor option to drop hidden tiles from the editing list.
+            if hideInvisibleInEditor && isParent && !previewMode {
+                items = items.filter { $0.isVisible }
+            }
+            nodes = items
             statusText = nodes.isEmpty ? "No tiles" : ""
             print("[ChildHome] loaded \(nodes.count) nodes (parentId: \(parentId ?? "root"))")
         } catch {
@@ -207,6 +214,11 @@ final class ChildHomeViewModel: ObservableObject {
         } catch {
             statusText = "Failed to update: \(error.localizedDescription)"
         }
+    }
+
+    func setHideInvisible(_ hide: Bool) {
+        hideInvisibleInEditor = hide
+        Task { await load(parentId: currentParentId) }
     }
 
     /// Quick show/hide toggle — patches only `isVisible`.
