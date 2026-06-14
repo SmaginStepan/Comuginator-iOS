@@ -10,6 +10,8 @@ final class ChildHomeViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var statusText = ""
     @Published var isEditorMode = false
+    /// Parent is previewing the board exactly as the child sees it.
+    @Published var previewMode = false
 
     // Blink
     @Published var blinkingNodeId: String? = nil
@@ -78,6 +80,29 @@ final class ChildHomeViewModel: ObservableObject {
     func navigateToRoot() {
         breadcrumbs.removeAll()
         Task { await load(parentId: nil) }
+    }
+
+    // MARK: - Preview mode (parent simulates the child's board)
+
+    func startPreview() {
+        stopBlink()
+        previewMode = true
+        breadcrumbs.removeAll()
+        Task { await load(parentId: nil) }
+    }
+
+    func stopPreview() {
+        stopBlink()
+        previewMode = false
+        breadcrumbs.removeAll()
+        Task { await load(parentId: nil) }
+    }
+
+    /// Preview tap on an ACTION tile — blink locally only, never notify parents.
+    func previewAction(_ node: ChildHomeNodeDto) {
+        guard node.blinkEnabled else { return }
+        blinkTask?.cancel()
+        Task { await startBlink(nodeId: node.id, seconds: node.blinkSeconds ?? 10) }
     }
 
     // MARK: - Action (child board)

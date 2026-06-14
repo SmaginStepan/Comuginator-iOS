@@ -12,21 +12,36 @@ struct ChildHomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Breadcrumb bar — shown whenever we've navigated into a sub-board
-            if !vm.breadcrumbs.isEmpty {
+            // Preview banner so the parent knows they're simulating the child
+            if vm.previewMode {
+                HStack(spacing: 6) {
+                    Image(systemName: "eye.fill")
+                    Text("Preview — as the child sees it")
+                }
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+                .background(Color.blue)
+            }
+
+            // Breadcrumb bar — hidden in preview (matches Android)
+            if !vm.breadcrumbs.isEmpty && !vm.previewMode {
                 breadcrumbBar
             }
 
             if vm.isLoading && vm.nodes.isEmpty {
                 ProgressView("Loading…")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if vm.isParent && vm.isEditorMode {
+            } else if vm.isParent && !vm.previewMode {
                 editorList
             } else {
                 boardGrid
             }
         }
-        .navigationTitle(vm.breadcrumbs.last.map { Text($0.name) } ?? Text("Child Home"))
+        .navigationTitle(vm.previewMode
+                         ? Text("Preview")
+                         : (vm.breadcrumbs.last.map { Text($0.name) } ?? Text("Child Home")))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
         .refreshable { await vm.load(parentId: vm.currentParentId) }
@@ -89,13 +104,14 @@ struct ChildHomeView: View {
     // MARK: - Board grid (child-facing / parent preview)
 
     private var boardGrid: some View {
-        let displayNodes = vm.isParent ? vm.nodes : vm.visibleNodes
+        // Board grid is shown to children and to parents in preview — both see
+        // only visible tiles, exactly as the child experiences it.
+        let displayNodes = vm.visibleNodes
         return Group {
             if displayNodes.isEmpty {
                 ContentUnavailableView(
-                    LocalizedStringKey(vm.isParent ? "No Nodes Yet" : "Nothing Here"),
-                    systemImage: "square.grid.2x2",
-                    description: Text(vm.isParent ? "Tap the pencil to switch to Editor and add tiles." : "")
+                    "Nothing Here",
+                    systemImage: "square.grid.2x2"
                 )
             } else {
                 ScrollView {
@@ -177,14 +193,18 @@ struct ChildHomeView: View {
         }
 
         if vm.isParent {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    withAnimation { vm.isEditorMode.toggle() }
-                } label: {
-                    Image(systemName: vm.isEditorMode ? "eye" : "pencil")
+            if vm.previewMode {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { withAnimation { vm.stopPreview() } } label: {
+                        Label("Stop", systemImage: "stop.circle")
+                    }
                 }
-            }
-            if vm.isEditorMode {
+            } else {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { withAnimation { vm.startPreview() } } label: {
+                        Label("Preview", systemImage: "play.circle")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
                 }
@@ -228,6 +248,9 @@ private struct NodeTileView: View {
             }
             if isMenu {
                 vm.navigateInto(node)
+            } else if vm.previewMode {
+                // Preview: blink locally only, don't notify parents
+                vm.previewAction(node)
             } else {
                 Task { await vm.requestAction(node) }
             }
