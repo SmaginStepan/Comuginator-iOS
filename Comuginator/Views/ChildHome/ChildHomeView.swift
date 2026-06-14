@@ -140,7 +140,15 @@ struct ChildHomeView: View {
                         Task { await vm.toggleVisibility(node) }
                     }
                     .contentShape(Rectangle())
-                    .onTapGesture { editTarget = node }
+                    .onTapGesture {
+                        // MENU rows open the sub-board to edit its tiles;
+                        // ACTION rows open the editor sheet.
+                        if node.type == "MENU" {
+                            vm.navigateInto(node)
+                        } else {
+                            editTarget = node
+                        }
+                    }
                     .swipeActions(edge: .leading) {
                         Button {
                             Task { await vm.toggleVisibility(node) }
@@ -149,6 +157,14 @@ struct ChildHomeView: View {
                                   systemImage: node.isVisible ? "eye.slash" : "eye")
                         }
                         .tint(node.isVisible ? .gray : .green)
+                        // Editing a MENU's own name/image needs an explicit action
+                        // since tapping the row enters the sub-board.
+                        if node.type == "MENU" {
+                            Button { editTarget = node } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            .tint(.blue)
+                        }
                     }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
@@ -385,8 +401,9 @@ private struct EditorRowView: View {
             }
             .buttonStyle(.borderless)
 
-            Image(systemName: "pencil.circle")
-                .foregroundStyle(.blue)
+            // MENU rows enter the sub-board; ACTION rows open the editor.
+            Image(systemName: isMenu ? "chevron.right" : "pencil.circle")
+                .foregroundStyle(isMenu ? Color.secondary : Color.blue)
         }
         .padding(.vertical, 2)
         .opacity(node.isVisible ? 1.0 : 0.55)
