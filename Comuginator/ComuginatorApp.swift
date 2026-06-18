@@ -22,16 +22,18 @@ struct ComuginatorApp: App {
         WindowGroup {
             rootView
                 // In-app language override (SwiftUI text re-resolves live)
-                .environment(\.locale, appLanguage == "system"
-                             ? .autoupdatingCurrent
-                             : Locale(identifier: appLanguage))
+                .environment(\.locale, resolvedLocale)
                 .environmentObject(notificationRouter)
-                // Present IncomingMessageView when a push notification is tapped
+                // Present IncomingMessageView when a push notification is tapped.
+                // The sheet is a separate presentation context that does not
+                // inherit the root's \.locale override, so apply it again here —
+                // otherwise this dialog falls back to the device language.
                 .sheet(item: Binding(
                     get: { notificationRouter.pendingMessageId.map { MessageIdWrapper($0) } },
                     set: { if $0 == nil { notificationRouter.pendingMessageId = nil } }
                 )) { wrapper in
                     IncomingMessageView(messageId: wrapper.id)
+                        .environment(\.locale, resolvedLocale)
                 }
                 // Deep links: widget tap (comuginator://message?id=…)
                 .onOpenURL { url in
@@ -59,6 +61,13 @@ struct ComuginatorApp: App {
                 break
             }
         }
+    }
+
+    // MARK: - Locale
+
+    /// The locale to apply app-wide for the in-app language switcher.
+    private var resolvedLocale: Locale {
+        appLanguage == "system" ? .autoupdatingCurrent : Locale(identifier: appLanguage)
     }
 
     // MARK: - Root view
